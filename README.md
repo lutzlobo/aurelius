@@ -1,2 +1,2 @@
 # aurelius
-Aurelius will (someday) be the best companion for studying.
+Aurelius will (someday) be the best companion for readers and writers.
