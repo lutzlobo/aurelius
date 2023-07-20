@@ -1,76 +1,63 @@
 #include <stdio.h>
 #include <string.h>
 
-//Define a maximum file size constant
-#define MAX_FILE_SIZE 1024
+#define MAX_FILE_SIZE 1024 // The maximum size that a file's content can be
 
-//Start of the program
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         printf("Please provide a filename as an argument.\n");
         return 1;
     }
 
-    char *filename = argv[1];
+    char *filename = argv[1]; // filename is now the first command line argument
 
-    //Declare a pointer to a FILE structure
+    // Declare a file pointer
     FILE *file;
 
-    //Declare an array to hold the file content
-    char content[MAX_FILE_SIZE];
+    // This will now be an array of character arrays, or an array of strings.
+    // This allows us to store each line of the file as a separate string.
+    char content[MAX_FILE_SIZE][MAX_FILE_SIZE];
     int i = 0;
 
-    //Open the file in read mode
-    file = fopen(filename, "rt");
+    file = fopen(filename, "rt"); // Open the file in read mode
 
-    //Check if the file was opened successfully
     if (file == NULL) {
-        printf("Could not open file \n");
+        printf("Could not open file\n");
     }
     else {
-        //If the file was opened successfully, read its content
-        char c;
-        while ((c = fgetc(file)) != EOF && i < MAX_FILE_SIZE - 1) {
-            content[i] = c;
+        char line[MAX_FILE_SIZE]; // Buffer to hold each line read from the file
+
+        // Read each line from the file until EOF is reached
+        while ((fgets(line, sizeof(line), file)) != NULL && i < MAX_FILE_SIZE - 1) {
+            strcpy(content[i], line); // Copy each line into the content array
             i++;
         }
-        //Terminate the string with a null character
-        content[i] = '\0';
-
-        //Close the file after reading its content
-        fclose(file);
+        printf("\nThe file has %d lines. \n\n", i); //Prints the number of lines on a file
+        content[i][0] = '\0'; // End the final line with a null character
+        fclose(file); // Close the file
+    }
+    // Loop through each line of content and print it
+    for (int j = 0; j < i; j++) {
+        printf("[%d] %s", j + 1, content[j]);
     }
 
-    //Print the current content of the file
-    printf("%s", content);
+    printf("\n\nEnter new text to add to the file (or just hit enter to leave the file unchanged): \n");
+    char input[MAX_FILE_SIZE]; // Buffer to hold user input
+    fgets(input, sizeof(input), stdin); // Get user input
+    input[strlen(input) - 1] = '\0'; // Remove the newline character from user input
 
-    //Prompt the user to enter new text
-    printf("Enter new text to add to the file (or just hit enter to leave the file unchanged) \n");
-    
-    //Declare an array to hold the user's input
-    char input[MAX_FILE_SIZE]; 
+    strcat(content[i-1], input); // Add user input to the last line of content
 
-    //Get the user's input
-    fgets(input, sizeof(input), stdin);
-
-    //Remove the newline character added by fgets()
-    input[strlen(input) - 1] = '\0'; 
-
-    //Append the user's input to the content
-    strcat(content, input); 
-
-    //Open the file in write mode to update its content
-    file = fopen(filename, "w");
-
-    //Check if the file was opened successfully
+    file = fopen(filename, "w"); // Open the file in write mode
     if (file != NULL) {
-        //Write the new content to the file
-        fputs(content, file); 
-        
-        //Close the file after writing the new content
-        fclose(file);
+        // Loop through each line of content and write it to the file
+        for (int j = 0; j < i; j++) {
+            fputs(content[j], file);
+        }
+        fclose(file); // Close the file
     } else {
-        printf("Could not open file for writing \n");
+        printf("Could not open file for writing\n");
     }
+    
     return 0;
 }
