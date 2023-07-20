@@ -5,7 +5,14 @@
 #define MAX_FILE_SIZE 1024
 
 //Start of the program
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Please provide a filename as an argument.\n");
+        return 1;
+    }
+
+    char *filename = argv[1];
+
     //Declare a pointer to a FILE structure
     FILE *file;
 
@@ -14,7 +21,7 @@ int main() {
     int i = 0;
 
     //Open the file in read mode
-    file = fopen("test.txt", "rt");
+    file = fopen(filename, "rt");
 
     //Check if the file was opened successfully
     if (file == NULL) {
@@ -53,7 +60,7 @@ int main() {
     strcat(content, input); 
 
     //Open the file in write mode to update its content
-    file = fopen("test.txt", "w");
+    file = fopen(filename, "w");
 
     //Check if the file was opened successfully
     if (file != NULL) {
